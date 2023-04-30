@@ -1,0 +1,368 @@
+import React, { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  TouchableHighlight,
+  Animated,
+  Button
+} from "react-native";
+import { Video, AVPlaybackStatus } from "expo-av";
+
+import background from './assets/background.mp4'
+import logo from './assets/logotest.png';
+import lineupThursday from './assets/lineup_thursday.jpg';
+import lineupFriday from './assets/lineup_friday_2x.jpg';
+import lineupSaturday from './assets/lineup_saturday_2x.jpg';
+import lineupSunday from './assets/lineup_sunday.jpg';
+import map from './assets/map.png';
+
+
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+
+import Swipeable from 'react-native-swipeable';
+// import { RectButton } from 'react-native-gesture-handler';
+// import Swipeable from 'react-native-gesture-handler/Swipeable';
+import 'react-native-gesture-handler'
+
+import ImageZoom from 'react-native-image-pan-zoom';
+
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
+const navTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: 'transparent',
+  },
+};
+
+
+
+function HomeScreen() {
+
+
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,.25)', paddingBottom: '40%' }}>
+
+      <TouchableOpacity style={styles.imageContainer}>
+        <Image source={logo} style={styles.logo} />
+      </TouchableOpacity>
+
+    </View>
+  );
+}
+
+function SettingsScreen() {
+
+  const [count, setCount] = useState(0);
+
+  function leftContent() {
+    if (count < 3) {
+      setCount(count + 1)
+    }
+  }
+  function rightContent() {
+    if (count > 0) {
+      setCount(count - 1)
+    }
+
+  }
+
+  function imgLineup() {
+    if (count === 0)
+      return lineupThursday;
+    else if (count === 1)
+      return lineupFriday
+    else if (count === 2)
+      return lineupSaturday
+    else if (count === 3)
+      return lineupSunday
+  }
+
+  function Lineup(x) {
+    <Image source={imgLineup()} style={styles.lineup} />
+  }
+
+  const Tab = createMaterialTopTabNavigator();
+
+  function MyTabsLineup() {
+    return (
+
+      <Tab.Navigator
+        initialRouteName="Home"
+        activeColor="#f0edf6"
+        inactiveColor="#f0edf6"
+        barStyle={{ backgroundColor: '#694fad' }}
+      >
+        <Tab.Screen name="Thursday" component={Lineup(count)} />
+        <Tab.Screen name="Settings" component={Lineup(count)} />
+        <Tab.Screen name="Settings" component={Lineup(count)} />
+        <Tab.Screen name="Settings" component={Lineup(count)} />
+      </Tab.Navigator>
+    );
+  }
+
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,.25)' }}
+    // onTouchStart={e => {
+    //   this.touchX = e.nativeEvent.pageX
+    // }}
+    // onTouchEnd={e => {
+    //   if (this.touchX - e.nativeEvent.pageX > 50)
+    //     leftContent()
+    //   if (this.touchX - e.nativeEvent.pageX < 50)
+    //     rightContent()
+    // }}
+    >
+      {/* <Image source={imgLineup()} style={styles.lineup} /> */}
+      {/* <ImageZoom cropWidth={Dimensions.get('window').width}
+        cropHeight={Dimensions.get('window').height}
+        imageWidth={200}
+        imageHeight={200}>
+        <Image style={{ width: '100%', height: 200 }}
+          source={imgLineup()} />
+      </ImageZoom> */}
+      <NavigationContainer>
+        <Tab.Navigator
+          initialRouteName="Thursday"
+          activeColor="#f0edf6"
+          inactiveColor="#f0edf6"
+          barStyle={{ backgroundColor: '#694fad' }}
+        >
+          <Tab.Screen name="Thursday" component={Lineup(count)} />
+          <Tab.Screen name="Friday" component={Lineup(count)} />
+          <Tab.Screen name="Saturday" component={SettingsScreen} />
+          <Tab.Screen name="Sunday" component={MapScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </View>
+  );
+}
+
+function MapScreen() {
+
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,.25)' }}>
+      {/* <ImageViewer source={map} style={styles.map} /> */}
+      <ImageZoom cropWidth={Dimensions.get('window').width}
+        cropHeight={Dimensions.get('window').height}
+        imageWidth={200}
+        imageHeight={200}>
+        <Image style={{ width: '100%', height: 200 }}
+          source={map} />
+      </ImageZoom>
+
+      {/* <ImageZoom
+  uri={map}
+  minScale={0.5}
+  maxScale={3}
+  onInteractionStart={() => console.log('Interaction started')}
+  onInteractionEnd={() => console.log('Interaction ended')}
+  onPinchStart={() => console.log('Pinch gesture started')}
+  onPinchEnd={() => console.log('Pinch gesture ended')}
+  onPanStart={() => console.log('Pan gesture started')}
+  onPanEnd={() => console.log('Pan gesture ended')}
+/> */}
+    </View>
+  );
+}
+
+// const Tab = createBottomTabNavigator();
+const Tab = createMaterialBottomTabNavigator();
+
+function MyTabs() {
+  return (
+
+    <Tab.Navigator
+      initialRouteName="Home"
+      activeColor="#f0edf6"
+      inactiveColor="#f0edf6"
+      barStyle={{ backgroundColor: '#694fad' }}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Schedule" component={SettingsScreen} />
+      <Tab.Screen name="Map" component={MapScreen} />
+    </Tab.Navigator>
+
+  )
+}
+
+export default function App() {
+
+  // const [email, setEmail] = React.useState("");
+  // const [password, setPassword] = React.useState("");
+
+  const video = React.useRef(null);
+  React.useEffect(() => {
+    if (video) {
+      video.current.playAsync();
+    }
+  }, [video]);
+
+  return (
+    <>
+      <View style={styles.container}>
+        <Video
+          ref={video}
+          style={styles.video}
+          source={background}
+          isLooping
+          isMuted={true}
+          resizeMode="cover"
+        />
+        <NavigationContainer theme={navTheme} >
+          <MyTabs />
+        </NavigationContainer>
+      </View>
+
+
+      {/* <View style={styles.containerSub}> */}
+
+
+      {/* <StatusBar style="auto" /> */}
+
+      {/* <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Email."
+            placeholderTextColor="#003f5c"
+            onChangeText={(email) => setEmail(email)}
+          />
+        </View>
+
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Password."
+            placeholderTextColor="#003f5c"
+            secureTextEntry={true}
+            onChangeText={(password) => setPassword(password)}
+          />
+        </View> */}
+
+
+      {/* <TouchableOpacity style={styles.loginBtn}>
+          <Text style={styles.loginText}>LOGIN</Text>
+        </TouchableOpacity> */}
+      {/* </View> */}
+    </>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    height: "100%",
+    width: "100%",
+    justifyContent: "center",
+    resizeMode: "cover",
+    position: "absolute",
+    width: "100%",
+    flexDirection: "column",
+    zIndex: 1
+  },
+  video: {
+    flex: 1,
+    alignSelf: "center",
+    width: "100%",
+    height: "120%",
+    position: 'absolute',
+    // top: 0,
+  },
+  navigation: {
+    flex: 1,
+    // backgroundColor: 'rgba(52, 52, 52, 0.7)',
+    alignItems: "center",
+    justifyContent: "center",
+    // position: 'absolute',
+    // bottom: 500,
+    // zIndex: 100
+  },
+  logo: {
+    // maxWidth: windowWidth,
+    // maxHeight: windowHeight,
+    flex: 1,
+    aspectRatio: .4,
+    resizeMode: 'contain',
+    paddingBottom: 300
+  },
+  lineup: {
+    // maxWidth: windowWidth,
+    // maxHeight: windowHeight,
+    flex: 1,
+    // aspectRatio: 1,
+    width: '120%',
+    resizeMode: 'stretch',
+    paddingBottom: '10%'
+  },
+  map: {
+    // maxWidth: windowWidth,
+    // maxHeight: windowHeight,
+    flex: 1,
+    aspectRatio: .5,
+    resizeMode: 'contain',
+    paddingBottom: 300
+  },
+
+  containerSub: {
+    // flex: 1,
+    // backgroundColor: 'rgba(52, 52, 52, 0.7)',
+    // alignItems: "center",
+    // justifyContent: "center",
+    position: 'absolute',
+    top: 0
+  },
+
+
+  // inputView: {
+  //   backgroundColor: "white",
+  //   borderRadius: 30,
+  //   width: "70%",
+  //   height: 45,
+  //   marginBottom: 20,
+
+  //   alignItems: "center",
+  // },
+
+  // TextInput: {
+  //   height: 50,
+  //   flex: 1,
+  //   padding: 10,
+  //   marginLeft: 20,
+  // },
+
+  // forgot_button: {
+  //   height: 30,
+  //   marginBottom: 30,
+  //   backgroundColor: 'rgba(52, 52, 52, 0.1)',
+  //   textAlign: 'center',
+  //   color: 'yellow'
+  // },
+
+  // loginBtn: {
+  //   width: "80%",
+  //   borderRadius: 25,
+  //   height: 50,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   marginTop: 40,
+  //   backgroundColor: "white",
+  // },  
+  // buttons: {
+  //   flexDirection: "row",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
+});
